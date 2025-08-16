@@ -1,9 +1,9 @@
 ============================================================
 DERAIN MODEL TEST RESULTS
 ============================================================
-Timestamp: 2025-08-16 17:22:08
-Input Image: ./data/test_data/test_12.png
-Weights Path: ./weights/derain_gan/derain_gan.ckpt-100000
+Timestamp: 2025-08-16 18:51:02
+Input Image: D:\School UIC\GAN\attentive-gan-derainnet\tools\test_12.png
+Weights Path: D:\School UIC\GAN\attentive-gan-derainnet\weights\derain_gan\derain_gan.ckpt-100000
 Label Path: None
 ------------------------------------------------------------
 
