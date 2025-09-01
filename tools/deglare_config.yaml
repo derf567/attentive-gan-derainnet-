@@ -1,0 +1,46 @@
+# Fine-tuned Deglaring Configuration
+system:
+  mode: "auto"
+  use_gpu: true
+  max_image_dimension: 0        # Set to 0 to disable resizing
+  default_output_dir: "enhanced_results"
+
+rain_detection:
+  threshold: 0.15
+
+glare_detection:
+  brightness_threshold: 190     # Slightly increased
+  saturation_threshold: 70      # Slightly decreased
+  min_glare_area: 5             # Increased to filter tiny noise
+  dilation_kernel_size: 11      # Increased to capture more area
+  threshold: 0.005              # Keep sensitive
+
+enhancement:
+  min_contrast: 25
+  low_exposure_threshold: 0.4
+  high_exposure_threshold: 0.4
+
+retinex_enhancement:
+  scales: [10, 50, 150]         # Good balance
+  weights: [0.3, 0.4, 0.3]      # Emphasize mid-range
+  gamma_correction: 0.8          # Slightly more aggressive
+  contrast_strength: 1.1         # Slightly more aggressive
+  percentile_low: 2
+  percentile_high: 98
+
+selective_deglaring:
+  enabled: true
+  feather_edges: true
+  feather_radius: 15            # Increased for smoother blending
+  opacity: 0.8                  # Stronger enhancement
+  enhance_only_glare_areas: true
+
+performance:
+  batch_size: 1
+  num_workers: 1
+
+logging:
+  level: "DEBUG"
+  save_reports: true
+  generate_visualizations: true
+  metrics_calculation: true

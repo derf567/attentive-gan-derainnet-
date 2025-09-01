@@ -3,41 +3,41 @@
   "processing_mode": "ENHANCE",
   "metrics": {
     "brightness": {
-      "original": 34.18451615314763,
-      "enhanced": 69.008510827765,
-      "improvement": 34.82399467461737
+      "original": 24.939608010432895,
+      "enhanced": 57.22150623570675,
+      "improvement": 32.28189822527385
     },
     "contrast": {
-      "original": 26.995786112250535,
-      "enhanced": 45.11731232412299,
-      "improvement": 18.121526211872457
+      "original": 41.84416991965845,
+      "enhanced": 46.72256854176123,
+      "improvement": 4.878398622102779
     },
     "dynamic_range": {
-      "original": 247.0,
+      "original": 255.0,
       "enhanced": 255.0,
-      "improvement": 8.0
+      "improvement": 0.0
     },
     "entropy": {
-      "original": 5.896417140960693,
-      "enhanced": 6.928339958190918,
-      "improvement": 1.0319228172302246
+      "original": 5.062526226043701,
+      "enhanced": 6.896533966064453,
+      "improvement": 1.834007740020752
     },
     "edge_strength": {
-      "original": 33.26107226469478,
-      "enhanced": 184.94487476232453,
-      "improvement": 151.68380249762976
+      "original": 30.94651554900372,
+      "enhanced": 236.45771657320302,
+      "improvement": 205.5112010241993
     },
-    "ssim": 0.6213791693273376,
-    "psnr": 14.629936730587891,
+    "ssim": 0.331923519926796,
+    "psnr": 13.94601136552004,
     "color_enhancement": {
-      "l_channel_improvement": 39.14001831562237,
-      "a_channel_variance": 1.862376793566388,
-      "b_channel_variance": 5.632154543088939
+      "l_channel_improvement": 34.34810282773573,
+      "a_channel_variance": 0.09671859348764489,
+      "b_channel_variance": 1.17627403158746
     },
     "road_visibility": {
-      "original_brightness": 26.789058171745154,
-      "enhanced_brightness": 65.26582101423439,
-      "improvement": 38.47676284248924
+      "original_brightness": 28.393963285065894,
+      "enhanced_brightness": 59.13101194220867,
+      "improvement": 30.73704865714278
     }
   }
 }
