@@ -560,24 +560,77 @@ class IntelligentImageProcessor:
         return vis_image
 
     def run_deraining(self, image_path, output_path):
-        """Execute Attentive GAN deraining model"""
+        """Execute Attentive GAN deraining model with better error handling"""
         try:
             weights_path = os.path.join(self.project_root, "weights", "derain_gan", "derain_gan.ckpt-100000")
+            
+            # Check if weights exist with different extensions
+            weights_found = False
+            weight_files = []
+            
+            # Check for all possible weight file components
+            for ext in ['', '.meta', '.index', '.data-00000-of-00001']:
+                check_path = weights_path + ext
+                if os.path.exists(check_path):
+                    weight_files.append(check_path)
+                    weights_found = True
+            
+            if not weights_found:
+                error_msg = f'Weights files not found. Expected at: {weights_path}.*'
+                print(error_msg)
+                
+                # Try to find any checkpoint files in the directory
+                weights_dir = os.path.dirname(weights_path)
+                if os.path.exists(weights_dir):
+                    available_files = os.listdir(weights_dir)
+                    checkpoint_files = [f for f in available_files if 'ckpt' in f]
+                    if checkpoint_files:
+                        error_msg += f'\nFound these files instead: {checkpoint_files}'
+                        print(f"Available checkpoint files: {checkpoint_files}")
+                        
+                        # Try to use the latest checkpoint if available
+                        if checkpoint_files:
+                            latest_checkpoint = max(checkpoint_files, key=lambda x: int(x.split('-')[-1]) if '-' in x else 0)
+                            weights_path = os.path.join(weights_dir, latest_checkpoint.split('.')[0])
+                            print(f"Trying to use: {weights_path}")
+                
+                return {'success': False, 'error': error_msg}
+            
+            print(f"Weight files found: {weight_files}")
+            
+            # Check if test_model.py exists
+            test_script_path = os.path.join(self.project_root, "tools", "test_model.py")
+            if not os.path.exists(test_script_path):
+                return {'success': False, 'error': f'Test script not found: {test_script_path}'}
+            
             cmd = [
                 sys.executable,
-                os.path.join(self.project_root, "tools", "test_model.py"),
+                test_script_path,
                 "--image_path", os.path.abspath(image_path),
                 "--weights_path", os.path.abspath(weights_path),
                 "--output_file", os.path.join(self.project_root, "derain_results.txt")
             ]
             
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            print(f"Running command: {' '.join(cmd)}")
+            
+            # Set environment to include project root
+            env = os.environ.copy()
+            env['PYTHONPATH'] = self.project_root + os.pathsep + env.get('PYTHONPATH', '')
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, env=env, cwd=self.project_root)
+            
+            print(f"Command stdout: {result.stdout}")
+            if result.stderr:
+                print(f"Command stderr: {result.stderr}")
+            
             if result.returncode == 0:
                 output_file = os.path.join(self.project_root, "derain_ret.png")
                 if os.path.exists(output_file):
                     os.replace(output_file, os.path.abspath(output_path))
                     return {'success': True}
-            return {'success': False, 'error': result.stderr}
+                else:
+                    return {'success': False, 'error': 'Output file was not created'}
+            return {'success': False, 'error': result.stderr or 'Unknown error'}
         except Exception as e:
             return {'success': False, 'error': str(e)}
 

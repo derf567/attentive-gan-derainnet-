@@ -1,5 +1,6 @@
 import sys
-sys.path.append('.')
+import os
+sys.path.append('.')  # Add current directory to Python path
 
 import os.path as ops
 import argparse
@@ -12,8 +13,36 @@ import cv2
 from skimage.metrics import structural_similarity as compare_ssim
 from skimage.metrics import peak_signal_noise_ratio as compare_psnr
 
-from attentive_gan_model import derain_drop_net
-from config import global_config
+# Add the parent directory to path to find attentive_gan_model
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+try:
+    from attentive_gan_model.derain_drop_net import derain_drop_net
+    from config import global_config
+except ImportError as e:
+    print(f"Import error: {e}")
+    print("Trying alternative import path...")
+    # Try importing directly
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "derain_drop_net", 
+            os.path.join(parent_dir, "attentive_gan_model", "derain_drop_net.py")
+        )
+        derain_drop_net = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(derain_drop_net)
+        
+        spec = importlib.util.spec_from_file_location(
+            "global_config", 
+            os.path.join(parent_dir, "config", "global_config.py")
+        )
+        global_config = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(global_config)
+    except Exception as alt_e:
+        print(f"Alternative import also failed: {alt_e}")
+        sys.exit(1)
 
 CFG = global_config.cfg
 
