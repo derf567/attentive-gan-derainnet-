@@ -1,0 +1,166 @@
+# Deraining Configuration
+# IMPROVED: Better default settings with stronger CLAHE
+system:
+  max_image_dimension: 2048  # Increase from 1024
+  # Or set to null to disable resizing entirely:
+  # max_image_dimension: null
+
+
+scene_detection:
+  enabled: true
+  method: 'brightness'
+  brightness_threshold: 80  # Below = night, Above = day
+
+# ============================================================
+# DAY SCENE SETTINGS (Bright images, brightness >= 80)
+# ============================================================
+day_settings:
+  preprocessing:
+    resize_method: 'INTER_LINEAR'
+    normalize_method: 'standard'
+    color_space: 'BGR'
+    denoise_before: false
+    denoise_strength: 3
+    contrast_adjust: 1.0
+    
+  inference:
+    target_width: 512
+    target_height: 512
+    preserve_aspect_ratio: true
+    
+  attention:
+    num_maps: 4
+    attention_threshold: 0.5
+    attention_weights: [0.25, 0.25, 0.25, 0.25]
+    use_weighted_attention: false
+    apply_attention_mask: false
+    mask_threshold: 0.3
+    
+  postprocessing:
+    apply_clahe: false
+    clahe_clip_limit: 2.5       # Moderate for day
+    clahe_tile_size: 8
+    sharpen: true
+    sharpen_strength: 0.4
+    bilateral_filter: false
+    bilateral_d: 9
+    bilateral_sigma_color: 75
+    bilateral_sigma_space: 75
+    
+  quality:
+    min_ssim: 0.65
+    min_psnr: 18
+    check_quality: false
+    auto_retry_on_failure: false
+    max_retries: 2
+    fallback_to_original: false
+
+# ============================================================
+# NIGHT SCENE SETTINGS (Dark images, brightness < 80)
+# ============================================================
+night_settings:
+  preprocessing:
+    resize_method: 'INTER_CUBIC'
+    normalize_method: 'standard'
+    color_space: 'BGR'
+    denoise_before: true        # More denoising for night
+    denoise_strength: 5
+    contrast_adjust: 1.2        # Boost contrast
+    
+  inference:
+    target_width: 512
+    target_height: 512
+    preserve_aspect_ratio: true
+    
+  attention:
+    num_maps: 4
+    attention_threshold: 0.4
+    attention_weights: [0.3, 0.3, 0.2, 0.2]
+    use_weighted_attention: true
+    apply_attention_mask: true
+    mask_threshold: 0.25
+    
+  postprocessing:
+    apply_clahe: true
+    clahe_clip_limit: 4.0       # STRONGER for night
+    clahe_tile_size: 8
+    sharpen: falsee
+    sharpen_strength: 0.6       # More sharpening
+    bilateral_filter: false
+    bilateral_d: 9
+    bilateral_sigma_color: 100
+    bilateral_sigma_space: 100
+    
+  quality:
+    min_ssim: 0.60
+    min_psnr: 16
+    check_quality: false
+    auto_retry_on_failure: false
+    max_retries: 3
+    fallback_to_original: false
+
+# ============================================================
+# DEFAULT SETTINGS (Fallback when detection fails)
+# ============================================================
+default_settings:
+  preprocessing:
+    resize_method: 'INTER_LINEAR'
+    normalize_method: 'standard'
+    color_space: 'BGR'
+    denoise_before: true
+    denoise_strength: 4
+    contrast_adjust: 1.1
+    
+  inference:
+    target_width: 512
+    target_height: 512
+    preserve_aspect_ratio: true
+    
+  attention:
+    num_maps: 4
+    attention_threshold: 0.5
+    attention_weights: [0.25, 0.25, 0.25, 0.25]
+    use_weighted_attention: false
+    apply_attention_mask: false
+    mask_threshold: 0.3
+    
+  postprocessing:
+    apply_clahe: true
+    clahe_clip_limit: 3.5
+    clahe_tile_size: 8
+    sharpen: true
+    sharpen_strength: 0.5
+    bilateral_filter: true
+    bilateral_d: 9
+    bilateral_sigma_color: 80
+    bilateral_sigma_space: 80
+    gamma_correction: 1.2
+    saturation_boost: 1.1
+    
+  quality:
+    min_ssim: 0.65
+    min_psnr: 18
+    check_quality: false
+    auto_retry_on_failure: false
+    max_retries: 2
+    fallback_to_original: false
+
+# ============================================================
+# SYSTEM SETTINGS
+# ============================================================
+system:
+  gpu_memory_fraction: 0.8
+  allow_growth: true
+  batch_size: 1
+  verbose: true
+  save_intermediate: false
+  output_format: 'png'
+
+# ============================================================
+# LOGGING
+# ============================================================
+logging:
+  save_metrics: true
+  metrics_format: 'txt'
+  save_attention_maps: true
+  save_comparison: true
