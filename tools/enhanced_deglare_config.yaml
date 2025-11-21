@@ -1,0 +1,83 @@
+# Enhanced Deglare Configuration with AGGRESSIVE Clean Detection
+# This config makes the system MUCH more conservative about processing clean images
+
+deraining:
+  force_scene: 'night'
+  enabled: true
+  config_path: 'deraining_config.yaml'
+  force_time_setting: null
+  
+rain_detection:
+  threshold: 0.35  # INCREASED from 0.25 - be more certain before processing
+
+system:
+  mode: auto
+  use_gpu: true
+  default_output_dir: enhanced_results
+  max_image_dimension: 2048
+
+# ============================================================
+# CRITICAL: MUCH STRICTER CLEAN DETECTION THRESHOLDS
+# ============================================================
+clean_detection:
+  enabled: true
+  
+  # Very lenient - only process if CLEARLY bad
+  min_good_contrast: 20           # Accept low contrast
+  min_sharpness: 50               # Accept slight blur
+  min_brightness: 30              # Accept darker images
+  max_brightness: 235             # Accept bright images
+  min_saturation: 15              # Accept desaturated images
+  
+  # Very high tolerance
+  max_rain_score: 0.40            # Accept high edge density (normal detail)
+  max_glare_score: 0.01           # CRITICAL: Only 1% glare area triggers processing
+  max_noise_level: 35             # Accept noisy images
+  
+  # High confidence needed to process
+  min_confidence_to_skip: 0.70    # 70% sure it's clean = skip
+
+# ============================================================
+# MUCH MORE CONSERVATIVE GLARE DETECTION
+# ============================================================
+glare_detection:
+  brightness_threshold: 240       # CRITICAL: Only extreme brightness
+  saturation_threshold: 15        # CRITICAL: Must be pure white
+  min_glare_area: 20              # Ignore tiny spots
+  dilation_kernel_size: 3         # Minimal expansion
+  threshold: 0.005                # CRITICAL: 0.5% coverage needed (very strict)
+
+selective_deglaring:
+  enabled: true
+  feather_edges: true
+  feather_radius: 18
+  opacity: 0.97
+  enhance_only_glare_areas: true
+
+enhancement:
+  method: aggressive_retinex
+  aggressive_glare_reduction: true
+  min_contrast: 20                # LOWERED from 25 - less aggressive
+  smoothing_strength: 25
+  low_exposure_threshold: 0.35    # RAISED from 0.25 - tolerate more underexposure
+  high_exposure_threshold: 0.35   # RAISED from 0.25 - tolerate more overexposure
+
+retinex_enhancement:
+  scales: [15, 60, 200]
+  weights: [0.5, 0.35, 0.15]
+  gamma_correction: 0.55
+  contrast_strength: 2.0
+  percentile_low: 1
+  percentile_high: 99
+  saturation_boost: 1.15
+  noise_reduction_strength: 0.4
+
+performance:
+  batch_size: 2
+  num_workers: 1
+
+logging:
+  level: DEBUG
+  save_reports: true
+  generate_visualizations: true
+  metrics_calculation: true

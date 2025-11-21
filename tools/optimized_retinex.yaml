@@ -1,0 +1,26 @@
+retinex_enhancement:
+  scales:
+  - 10      # Smaller scales reduce halo
+  - 40
+  - 120
+  weights:
+  - 0.5     # More weight on small scale
+  - 0.3
+  - 0.2
+  gamma_correction: 0.6  # Lower gamma darkens glare
+  contrast_strength: 1.1  # Reduced contrast
+  percentile_low: 2
+  percentile_high: 92     # Lower high percentile clips glare
+  saturation_threshold: 240  # Add this
+  glare_suppression: 0.7     # Add this
+
+training_info:
+  num_training_pairs: 163
+  best_score: 0.386884731054306
+  avg_ssim: 0.5526924729347229
+  avg_psnr: 14.57253360748291
+  training_date: '2025-11-18 23:41:33'
+  method: GPU-Accelerated Parameter Optimization
+  gpu_used: true
+
+

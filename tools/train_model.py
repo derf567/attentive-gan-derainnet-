@@ -8,6 +8,13 @@
 """
 模型训练脚本
 """
+import sys
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir)
+
 import os
 import os.path as ops
 import argparse
@@ -20,6 +27,8 @@ import glog as log
 from data_provider import data_feed_pipline
 from config import global_config
 from attentive_gan_model import derain_drop_net
+
+
 
 CFG = global_config.cfg
 VGG_MEAN = [103.939, 116.779, 123.68]
@@ -259,7 +268,7 @@ def train_model(dataset_dir, weights_path=None):
             saver.restore(sess=sess, save_path=weights_path)
 
         # 加载预训练参数
-        pretrained_weights = np.load('./data/vgg16.npy', encoding='latin1').item()
+        pretrained_weights = np.load('./data/vgg16.npy', encoding='latin1', allow_pickle=True).item()
 
         for vv in vgg_vars:
             weights_key = vv.name.split('/')[-3]
